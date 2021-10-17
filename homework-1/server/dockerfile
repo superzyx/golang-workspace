@@ -1,0 +1,8 @@
+FROM ubuntu
+ENV SERVER_PORT=8080
+
+LABEL multi.label1="server"
+ADD bin/server/amd64/main /usr/bin/main
+
+EXPOSE 8080
+ENTRYPOINT /usr/bin/main

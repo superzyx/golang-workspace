@@ -1,0 +1,7 @@
+FROM ubuntu
+
+ENV name="zyx"
+LABEL multi.label1="client"
+ADD bin/amd64/client/main /usr/bin/main
+
+ENTRYPOINT /usr/bin/main
