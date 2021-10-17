@@ -1,9 +1,8 @@
 export tag=v1.0
-root
 
 main:
-	mkdir -p bin/server/amd64
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/server/amd64 
+	mkdir -p ../bin/server/amd64
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ../bin/server/amd64/main
 
 release:
     docker build -t hub.docker.com/httpserver:${tag}
