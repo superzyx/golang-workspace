@@ -1,9 +1,9 @@
 export tag=v1.0
 
 main:
-	mkdir -p ../bin/client/amd64
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../bin/client/amd64/main
+	mkdir -p bin/amd64
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/amd64/main
 
 release:
-    docker build -t hub.docker.com/httpclient:${tag}
-	docker push hub.docker.com/httpclient:${tag}
+	docker build -t superzyx12138/httpclient:${tag} .
+	docker push superzyx12138/httpclient:${tag}
