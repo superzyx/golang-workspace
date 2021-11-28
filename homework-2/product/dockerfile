@@ -1,0 +1,5 @@
+FROM ubuntu
+
+ADD bin/amd64/main /usr/bin/main
+EXPOSE 8888
+ENTRYPOINT /usr/bin/main
