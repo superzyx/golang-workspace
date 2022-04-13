@@ -58,7 +58,7 @@ func promhttpHandle(c *web.Context) {
 func main() {
 	sd := web.NewShutdown()
 	web.Register()
-	s := web.NewServer("newOne", sd.ShutdownBuilder)
+	s := web.NewServer("newOne", sd.ShutdownBuilder, web.NewMetrics())
 	s.Route("GET","/registry", registry)
 	s.Route("GET", "/healthz", healthz)
 	s.Route("GET", "/metrics", promhttpHandle)
