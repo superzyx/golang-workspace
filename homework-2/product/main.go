@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
+	"time"
 	web "web-go/pkg"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -47,6 +49,8 @@ func registry(ctx *web.Context) {
 }
 
 func healthz(c *web.Context) {
+	i := rand.Intn(2000)
+	time.Sleep(time.Millisecond*time.Duration(i))
 	c.W.WriteHeader(http.StatusOK)
 }
 
@@ -57,6 +61,7 @@ func promhttpHandle(c *web.Context) {
 
 func main() {
 	sd := web.NewShutdown()
+	rand.Seed(time.Now().UnixNano())
 	web.Register()
 	s := web.NewServer("newOne", sd.ShutdownBuilder, web.NewMetrics())
 	s.Route("GET","/registry", registry)
