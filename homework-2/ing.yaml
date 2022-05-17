@@ -36,8 +36,6 @@ metadata:
   name: product-server
   namespace: product-custom
 spec:
-  selector:
-    apps: product-server
   type: NodePort
   ports:
     - name: http
@@ -45,6 +43,38 @@ spec:
       protocol: TCP
       targetPort: 8888
       nodePort: 30007
+
+---
+apiVersion: networking.k8s.io/v1
+king: Ingress
+metadata:
+  name: product-server
+  namespace: product-custom
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    app.kubernetes.io/name: product-custom
+spec:
+  rules:
+    - host: product-server.default.svc.cluster.local
+      http:
+        paths:
+          - path: "/healthz"
+            pathType: Prefix
+            backend:
+              service:
+                name: product-server
+                port:
+                  number: 8888
+    - host: product-server.default.svc.cluster.local
+        http:
+          paths:
+              - path: "/worker"
+                pathType: Prefix
+                backend:
+                  service:
+                    name: product-server
+                    port:
+                      number: 8888
 
 ---
 apiVersion: apps/v1
@@ -57,9 +87,6 @@ metadata:
   name: product-server
   namespace: product-custom
 spec:
-  selector:
-    matchLabels:
-      apps: product-server
   replicas: 1
   strategy:
     rollingUpdate:
@@ -72,12 +99,10 @@ spec:
         apps: product-server
       annotations:
         app.kubernetes.io/name: product-custom
-        prometheus.io/port: metrics-port
-        prometheus.io/scrape: "true"
     spec:
       containers:
         - name: product
-          image: superzyx12138/product-server:v2.0
+          image: superzyx12138/product-server:v1.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 5
@@ -89,9 +114,6 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-          ports:
-            - containerPort: 8888
-              name: metrics-port
-              protocol: TCP
+
 
 
