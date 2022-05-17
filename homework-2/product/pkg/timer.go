@@ -23,7 +23,6 @@ var(
 
 type ExecutionMethod interface {
 	NewHistogramVec(namespace, help string) *prometheus.HistogramVec
-
 }
 
 func NewHistogramVec(namespace, help string) *prometheus.HistogramVec {
