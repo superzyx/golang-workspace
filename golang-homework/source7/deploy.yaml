@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: product-custom
+  labels:
+    app.kubernetes.io/name: product-custom
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/name: product-custom
+  name: test
+  namespace: product-custom
+automountServiceAccountToken: true
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: product-custom
+  name: product-server
+  namespace: product-custom
+data:
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app: my-producter
+  labels:
+    app.kubernetes.io/name: product-custom
+  name: product-server
+  namespace: product-custom
+spec:
+  selector:
+    apps: product-server
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8888
+      nodePort: 30007
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    apps: product-server
+  annotations:
+    app.kubernetes.io/name: product-custom
+  name: product-server
+  namespace: product-custom
+spec:
+  selector:
+    matchLabels:
+      apps: product-server
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        apps: product-server
+      annotations:
+        app.kubernetes.io/name: product-custom
+        prometheus.io/port: metrics-port
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+        - name: product
+          image: superzyx12138/product-server:v2.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          ports:
+            - containerPort: 8888
+              name: metrics-port
+              protocol: TCP
+
+
